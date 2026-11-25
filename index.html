@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151519">
+  <meta name="description" content="DataRushi — Rushikesh Jawale, Artificial Intelligence and Data Science engineering student.">
+  <title>DataRushi — Rushikesh Jawale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20261125-12">
+</head>
+<body>
+  <div class="loader" aria-hidden="true">
+    <div class="loader__top">
+      <span>DataRushi / 01</span>
+      <span class="loader__status">Loading</span>
+    </div>
+    <div class="loader__mark">DR</div>
+    <div class="loader__bottom">
+      <span>Rushikesh Jawale</span>
+      <span class="loader__count">0%</span>
+    </div>
+  </div>
+  <div class="cursor" aria-hidden="true"><span></span></div>
+  <div class="page-grid" aria-hidden="true"></div>
+
+  <header class="site-header" aria-label="Primary navigation">
+    <a class="brand" href="#top" aria-label="DataRushi home">
+      <span class="brand-mark">DR</span>
+      <span class="brand-name">DataRushi</span>
+    </a>
+    <nav class="desktop-nav" aria-label="Main">
+      <a href="#work">Work</a>
+      <a href="#research">Research</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="menu-toggle magnetic" type="button" aria-expanded="false" aria-controls="menu-panel">
+      <span class="menu-label">Menu</span>
+      <span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </header>
+
+  <aside class="menu-panel" id="menu-panel" aria-hidden="true">
+    <div class="menu-panel__top">
+      <span>DataRushi / Index</span>
+      <button class="menu-close" type="button" aria-label="Close menu">Close</button>
+    </div>
+    <nav class="menu-panel__links" aria-label="Expanded">
+      <a href="#top"><span>01</span>Top</a>
+      <a href="#about"><span>02</span>About</a>
+      <a href="#work"><span>03</span>Work</a>
+      <a href="#research"><span>04</span>Research</a>
+      <a href="#contact"><span>05</span>Contact</a>
+    </nav>
+    <div class="menu-panel__foot">
+      <a href="https://github.com/rishijawale" target="_blank" rel="noopener">GitHub ↗</a>
+      <span>Pune, India / 18.5204° N</span>
+    </div>
+  </aside>
+
+  <main class="smooth-scroll" id="top">
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero__pin">
+        <div class="hero__meta">
+          <p>Artificial Intelligence<br>&amp; Data Science</p>
+          <p>Pune, India / 2028<br><span class="availability"><i></i> Open to internships</span></p>
+        </div>
+        <div class="hero__identity" aria-label="Personal identity">
+          <strong>Rushikesh Jawale</strong>
+          <span>AI &amp; Data Science · Creative Developer</span>
+        </div>
+
+        <div class="hero__line-group" data-animated-line-group data-line-trigger=".hero" data-line-start="top bottom-=50" aria-hidden="true">
+          <span class="animated-line animated-line--vertical hero__line hero__line--left" data-animated-line="vertical"></span>
+          <span class="animated-line animated-line--vertical hero__line hero__line--right" data-animated-line="vertical"></span>
+          <span class="animated-line animated-line--horizontal hero__line hero__line--top" data-animated-line="horizontal"></span>
+          <span class="animated-line animated-line--horizontal hero__line hero__line--bottom" data-animated-line="horizontal"></span>
+        </div>
+
+        <div class="hero__stage" aria-label="A cinematic collage of artificial intelligence, hardware and experimental form">
+          <figure class="hero-image hero-image--01" data-depth="-250,220">
+            <span class="hero-image__scale"><img src="img/hero/processor-motherboard.jpg" alt="A powerful computer processor and motherboard" width="800" height="600" fetchpriority="high"></span>
+          </figure>
+          <figure class="hero-image hero-image--02" data-depth="-180,-250">
+            <span class="hero-image__scale"><img src="img/hero/chromatic-chip.jpg" alt="Experimental processor architecture" width="1365" height="768" fetchpriority="high"></span>
+          </figure>
+          <figure class="hero-image hero-image--03" data-depth="-220,-280">
+            <span class="hero-image__scale"><img src="img/hero/intelligent-system.jpg" alt="Illuminated intelligent system interface" width="960" height="1200" loading="eager"></span>
+          </figure>
+          <figure class="hero-image hero-image--04" data-depth="250,320">
+            <span class="hero-image__scale"><img src="img/hero/black-form.jpg" alt="Sculptural black form" width="960" height="640"></span>
+          </figure>
+          <figure class="hero-image hero-image--05" data-depth="165,-150">
+            <span class="hero-image__scale"><img src="img/hero/human-ai.jpg" alt="Human profile merged with machine circuitry" width="960" height="640"></span>
+          </figure>
+          <figure class="hero-image hero-image--06" data-depth="195,255">
+            <span class="hero-image__scale"><img src="img/hero/experimental-form.jpg" alt="Experimental geometric form in a spatial model" width="960" height="1200"></span>
+          </figure>
+          <figure class="hero-image hero-image--07" data-depth="235,-360">
+            <span class="hero-image__scale"><img src="img/hero/language-console.jpg" alt="Language model console study" width="960" height="1200"></span>
+          </figure>
+
+          <h1 class="hero-title" id="hero-title">
+            <span class="hero-title__mask"><span class="hero-title__line">Rushikesh.</span></span>
+          </h1>
+        </div>
+
+        <div class="hero__footer">
+          <p>Independent portfolio / <span id="year"></span></p>
+          <span class="hero__signature">AI &amp; Creative Developer</span>
+          <a class="magnetic" href="#about">Explore <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro" id="about" aria-labelledby="about-title">
+      <span class="animated-line animated-line--horizontal intro__line intro__line--top" data-animated-line="horizontal" aria-hidden="true"></span>
+      <p class="eyebrow">01 / Introduction</p>
+      <h2 id="about-title">
+        <span class="reveal-line">Curiosity drives me.</span>
+        <span class="reveal-line">Intelligence inspires me.</span>
+        <em class="reveal-line">Building defines me.</em>
+      </h2>
+      <div class="intro__details">
+        <p>I’m an AI &amp; Data Science engineering student exploring the intersection of intelligent systems, software engineering and creative technology.</p>
+        <p>Expected graduation: 2028<br>CGPA: 9.0</p>
+      </div>
+      <div class="intro__line-group" data-animated-line-group data-line-trigger=".intro" data-line-start="bottom bottom-=150" aria-hidden="true">
+        <span class="animated-line animated-line--horizontal intro__line intro__line--bottom" data-animated-line="horizontal"></span>
+        <span class="animated-line animated-line--vertical intro__line intro__line--divider" data-animated-line="vertical" data-line-origin="bottom-right"></span>
+      </div>
+    </section>
+
+    <section class="ai-transition" aria-label="Cinematic transition into selected work">
+      <div class="ai-transition__pin">
+        <div class="ai-transition__line-group" data-animated-line-group data-line-trigger=".ai-transition" data-line-start="top bottom-=50" aria-hidden="true">
+          <span class="animated-line animated-line--horizontal ai-transition__line ai-transition__line--top" data-animated-line="horizontal"></span>
+          <span class="animated-line animated-line--vertical ai-transition__line ai-transition__line--divider" data-animated-line="vertical"></span>
+        </div>
+        <span class="ai-transition__index">02 / Selected work</span>
+        <svg class="ai-transition__art" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+          <path fill-rule="evenodd" d="M80 440 220 60Q228 42 236 60L380 440H326L293 340H164L132 440ZM179 300H278L230 151Z"/>
+          <path d="M560 60H820V110H735V390H820V440H560V390H645V110H560Z"/>
+        </svg>
+        <p class="ai-transition__caption">From questions to systems.</p>
+      </div>
+    </section>
+
+    <section class="projects" id="work" aria-labelledby="work-title">
+      <span class="animated-line animated-line--horizontal projects__line projects__line--top" data-animated-line="horizontal" aria-hidden="true"></span>
+      <div class="parallax_sections">
+        <article class="ps ps1 project-stage">
+          <span class="bgp" role="img" aria-label="Black-and-white close-up of a computer motherboard" style="background-image: url('img/hero/processor-motherboard.jpg')"></span>
+          <div class="projects__head">
+            <p class="eyebrow">03 / Selected projects</p>
+            <h2 id="work-title"><span class="reveal-line">Experiments in</span><em class="reveal-line">intelligent making.</em></h2>
+          </div>
+          <div class="fixed_t">
+            <h3 class="h2s" id="docpilot-title">DocPilot AI</h3>
+            <p class="txt vs">AI exploration / In progress</p>
+          </div>
+          <div class="project-stage__meta">
+            <span class="project-stage__number">01 / 03</span>
+            <span class="project-stage__tech">Python · FastAPI</span>
+            <a href="#contact" aria-label="Discuss DocPilot AI">Case study ↗</a>
+          </div>
+        </article>
+        <article class="ps ps2 project-stage">
+          <span class="bgp" role="img" aria-label="Human and machine visual study" style="background-image: url('img/hero/human-ai.jpg')"></span>
+          <div class="fixed_t">
+            <h3 class="h2s" id="dukaanpilot-title">DukaanPilot AI</h3>
+            <p class="txt vs">Intelligent commerce / In progress</p>
+          </div>
+          <div class="project-stage__meta">
+            <span class="project-stage__number">02 / 03</span>
+            <span class="project-stage__tech">Python · AI-assisted development</span>
+            <a href="#contact" aria-label="Discuss DukaanPilot AI">Case study ↗</a>
+          </div>
+        </article>
+        <article class="ps ps3 project-stage">
+          <span class="bgp" role="img" aria-label="Sculptural black form for Creative Lab" style="background-image: url('img/hero/black-form.jpg')"></span>
+          <div class="fixed_t">
+            <h3 class="h2s" id="creative-lab-title">Creative Lab</h3>
+            <p class="txt vs">Visual systems / Exploration</p>
+          </div>
+          <div class="project-stage__meta">
+            <span class="project-stage__number">03 / 03</span>
+            <span class="project-stage__tech">n8n · Creative technology</span>
+            <a href="#contact" aria-label="Discuss Creative Lab">Case study ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="placeholder" id="research">
+      <div class="placeholder__line-group" data-animated-line-group data-line-trigger="#research" data-line-start="top bottom-=50" aria-hidden="true">
+        <span class="animated-line animated-line--horizontal placeholder__line placeholder__line--top" data-animated-line="horizontal"></span>
+        <span class="animated-line animated-line--vertical placeholder__line placeholder__line--divider" data-animated-line="vertical"></span>
+      </div>
+      <p>04 / Research</p>
+    </section>
+    <section class="placeholder" id="contact">
+      <div class="placeholder__line-group" data-animated-line-group data-line-trigger="#contact" data-line-start="top bottom-=50" aria-hidden="true">
+        <span class="animated-line animated-line--horizontal placeholder__line placeholder__line--top" data-animated-line="horizontal"></span>
+        <span class="animated-line animated-line--vertical placeholder__line placeholder__line--divider" data-animated-line="vertical"></span>
+      </div>
+      <p>05 / Contact</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@8.8.4/dist/smooth-scrollbar.js"></script>
+  <script src="js/main.js?v=20261125-12"></script>
+</body>
+</html>
