@@ -1,7 +1,8 @@
 (function () {
   "use strict";
 
-  var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var reducedMotion = motionPreference.matches;
   var touchDevice = window.matchMedia("(pointer: coarse)").matches;
   var menuToggle = document.querySelector(".menu-toggle");
   var menuClose = document.querySelector(".menu-close");
@@ -49,21 +50,8 @@
   }
 
   function finishLoading() {
-    if (!loader) return;
-    if (!window.gsap || reducedMotion) {
-      loader.remove();
-      document.body.classList.remove("is-loading");
-      return;
-    }
-    gsap.to(loader, {
-      clipPath: "inset(0 0 100% 0)",
-      duration: .9,
-      ease: "expo.inOut",
-      onComplete: function () {
-        loader.remove();
-        document.body.classList.remove("is-loading");
-      }
-    });
+    if (loader) loader.remove();
+    document.body.classList.remove("is-loading");
   }
 
   function loadAssets() {
@@ -79,29 +67,35 @@
     }));
   }
 
+  var menuAnimation;
   function setMenu(open) {
-    document.body.classList.toggle("menu-open", open);
+    var header = menuToggle.closest("header");
+    var content = document.querySelector("main");
+    if (menuAnimation) menuAnimation.kill();
+    if (smoothScrollbar) smoothScrollbar.setMomentum(0, 0);
+    header.inert = open;
+    content.inert = open;
+    menuPanel.inert = !open;
     menuToggle.setAttribute("aria-expanded", String(open));
+    if (!open) menuToggle.focus({ preventScroll: true });
+    document.body.classList.toggle("menu-open", open);
     menuPanel.setAttribute("aria-hidden", String(!open));
-
-    if (!window.gsap) return;
+    if (window.gsap) {
+      gsap.set(menuPanel, { clearProps: "visibility,clipPath" });
+      gsap.set(menuLinks, { clearProps: "opacity,transform" });
+      if (open && !motionPreference.matches) {
+        menuAnimation = gsap.timeline()
+          .from(menuPanel, { clipPath: "inset(0 0 100% 0)", duration: .45, ease: "expo.out" })
+          .from(menuLinks, { y: 24, opacity: 0, duration: .35, stagger: .04 }, .12);
+      }
+    }
     if (open) {
-      gsap.set(menuPanel, { visibility: "visible" });
-      gsap.timeline()
-        .to(menuPanel, { clipPath: "inset(0 0 0 0)", duration: .75, ease: "expo.inOut" })
-        .fromTo(menuLinks,
-          { y: 60, opacity: 0 },
-          { y: 0, opacity: 1, duration: .65, stagger: .07, ease: "expo.out" },
-          "-=.35");
-    } else {
-      gsap.timeline()
-        .to(menuLinks, { y: -30, opacity: 0, duration: .25, stagger: .03, ease: "power2.in" })
-        .to(menuPanel, {
-          clipPath: "inset(0 0 100% 0)",
-          duration: .55,
-          ease: "expo.inOut",
-          onComplete: function () { gsap.set(menuPanel, { visibility: "hidden" }); }
-        });
+      menuClose.focus({ preventScroll: true });
+      requestAnimationFrame(function () {
+        if (!menuPanel.inert && !menuPanel.contains(document.activeElement)) {
+          menuClose.focus({ preventScroll: true });
+        }
+      });
     }
   }
 
@@ -124,6 +118,7 @@
     if (touchDevice || reducedMotion || !window.gsap) return;
     document.querySelectorAll(".magnetic").forEach(function (element) {
       element.addEventListener("pointermove", function (event) {
+        if (motionPreference.matches) return;
         var rect = element.getBoundingClientRect();
         var moveX = (event.clientX - (rect.left + rect.width / 2)) * .2;
         var moveY = (event.clientY - (rect.top + rect.height / 2)) * .2;
@@ -138,11 +133,13 @@
   function fitHeroTitle() {
     var titleLine = document.querySelector(".hero-title__line");
     if (!titleLine) return;
-    var naturalWidth = titleLine.scrollWidth;
-    if (!naturalWidth) return;
-    var stage = titleLine.closest(".hero__stage");
-    var availableWidth = stage ? stage.clientWidth : window.innerWidth;
-    titleLine.style.setProperty("--wordmark-scale", (availableWidth * .8 / naturalWidth).toFixed(4));
+    var title = titleLine.closest(".hero-title");
+    var stage = title.closest(".hero__stage");
+    var naturalWidth = titleLine.offsetWidth;
+    if (!naturalWidth || !stage.clientWidth) return;
+    var size = parseFloat(getComputedStyle(titleLine).fontSize);
+    var widthFraction = window.innerWidth <= 760 ? .97 : .80;
+    title.style.setProperty("--hero-type-size", (size * stage.clientWidth * widthFraction / naturalWidth) + "px");
   }
 
   function AnimatedLine(element) {
@@ -234,7 +231,7 @@
     try {
       smoothScrollbar = window.Scrollbar.init(scroller, {
         damping: .07,
-        delegateTo: document,
+        delegateTo: scroller,
         renderByPixels: true,
         keyDownDisabled: false,
         alwaysShowTracks: true
@@ -258,61 +255,67 @@
     });
     ScrollTrigger.defaults({ scroller: scroller });
     smoothScrollbar.addListener(ScrollTrigger.update);
-    ScrollTrigger.addEventListener("refresh", function () { smoothScrollbar.update(); });
+    ScrollTrigger.addEventListener("refresh", updateScrollSize);
     smoothScrollbar.track.xAxis.element.remove();
   }
 
-  function initProjectShowcase() {
-    var stages = gsap.utils.toArray(".parallax_sections .ps");
-    if (!stages.length) return;
-
-    stages.forEach(function (stage, index) {
-      var background = stage.querySelector(".bgp");
-      if (!background) {
-        console.error("Project stage is missing its background image.", stage);
-        return;
+  function initWorkHandoff() {
+    var handoff = document.querySelector(".work-handoff");
+    var overlay = handoff.querySelector(".ai-transition");
+    var art = overlay.querySelector(".ai-transition__art");
+    var camera = { zoom: 1 };
+    var timeline = gsap.timeline({
+      scrollTrigger: {
+        id: "ai-work-handoff",
+        trigger: handoff,
+        start: "top top",
+        end: "bottom bottom",
+        pin: handoff.querySelector(".work-handoff__pin"),
+        pinSpacing: false,
+        scrub: true,
+        invalidateOnRefresh: true
       }
-
-      gsap.fromTo(background,
-        { backgroundPosition: "50% 0%" },
-        {
-          backgroundPosition: "50% 100%",
-          ease: "none",
-          scrollTrigger: {
-            id: "project-background-" + (index + 1),
-            trigger: stage,
-            start: index === 0 ? "top top" : "top bottom",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true
-          }
-        });
     });
+    timeline.to(camera, {
+      zoom: 22, duration: 1, ease: "power2.in",
+      onUpdate: function () {
+        // Move into the counter of the A. Updating the SVG camera preserves its sharp edges.
+        var width = 1000 / camera.zoom;
+        var height = 500 / camera.zoom;
+        art.setAttribute("viewBox", [
+          (1000 - width) * .23, (500 - height) * .53, width, height
+        ].join(" "));
+      }
+    }, 0)
+      .to(".ai-transition__index, .ai-transition__caption, .ai-transition__line-group", {
+        opacity: 0, duration: .22, ease: "none"
+      }, .12)
+      .to(overlay, { autoAlpha: 0, duration: .55, ease: "power1.inOut" }, .45);
+  }
 
-    [".h2s", ".txt.vs"].forEach(function (selector) {
-      var elements = gsap.utils.toArray(".parallax_sections " + selector);
-      elements.forEach(function (element, index) {
-        gsap.to(element, {
-          ease: "none",
-          scrollTrigger: {
-            id: "project-" + (selector === ".h2s" ? "title-" : "description-") + (index + 1),
-            trigger: element,
-            pin: true,
-            pinSpacing: false,
-            scrub: true,
-            start: function () {
-              var top = window.getComputedStyle(element).top;
-              return "top top+=" + top;
-            },
-            end: function () {
-              var duration = index === elements.length - 1 ?
-                window.innerHeight : window.innerHeight * (index + 1);
-              return "+=" + duration;
-            },
-            invalidateOnRefresh: true
-          }
-        });
+  function initProjectShowcase() {
+    gsap.utils.toArray(".parallax_sections .ps").forEach(function (stage, index) {
+      var trigger = index === 0 ? stage.closest(".work-handoff") : stage;
+      var timeline = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          id: "project-" + (index + 1),
+          trigger: trigger,
+          start: index === 0 ? "bottom bottom" : "top bottom",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true
+        }
       });
+      timeline.fromTo(stage.querySelector(".bgp"),
+        { yPercent: index === 0 ? 0 : -7 },
+        { yPercent: 7 }, 0);
+      // Counter the panel's travel. The article clips both lines at the same boundary.
+      timeline.fromTo(stage.querySelector(".fixed_t"), {
+        y: function () { return index === 0 ? 0 : -window.innerHeight; }
+      }, {
+        y: function () { return stage.offsetHeight; }
+      }, 0);
     });
   }
 
@@ -324,14 +327,13 @@
     gsap.registerPlugin(ScrollTrigger);
     initSmoothScroll();
     var images = gsap.utils.toArray(".hero-image");
-    var imageScales = gsap.utils.toArray(".hero-image__scale");
-    gsap.set(images, { clipPath: "inset(100%)" });
-    gsap.set(imageScales, { scale: 1.8, autoAlpha: 0, transformOrigin: "50% 50%" });
+
+    gsap.set(images, { autoAlpha: 0, scale: .18, clipPath: "inset(12% 12% 12% 12%)" });
     gsap.set(".hero-title__line", { yPercent: 120 });
 
     if (reducedMotion) {
       gsap.set(images, { clipPath: "inset(0%)" });
-      gsap.set(imageScales, { scale: 1, autoAlpha: 1 });
+      gsap.set(images, { autoAlpha: 1, scale: 1 });
       gsap.set(".hero-title__line", { yPercent: 0 });
       gsap.set(".reveal-line", { clipPath: "inset(0)", y: 0 });
       gsap.set(".projects__head .reveal-line", { opacity: 1, y: 0 });
@@ -360,9 +362,6 @@
       }
       return image;
     }).filter(Boolean);
-    var orderedScales = orderedImages.map(function (image) {
-      return image.querySelector(".hero-image__scale");
-    });
     var subtitleOffset = window.innerWidth <= 760 ? 25 : window.innerWidth * .01302;
     var siteHeader = document.querySelector(".site-header");
     gsap.set(".hero__identity, .hero__meta, .hero__footer", {
@@ -372,11 +371,8 @@
 
     var entranceTimeline = gsap.timeline();
     entranceTimeline
-      .to(orderedScales, {
-        scale: 1, autoAlpha: 1, duration: 1.8, stagger: .27, ease: "expo.out"
-      }, 0)
       .to(orderedImages, {
-        clipPath: "inset(0%)", duration: 1.8, stagger: .27, ease: "expo.out"
+        autoAlpha: 1, scale: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 1.8, stagger: .27, ease: "expo.out"
       }, 0)
       .addLabel("composition", 1.8)
       .to(".hero-title__line", {
@@ -404,8 +400,8 @@
       scrollTrigger: {
         trigger: ".hero",
         start: "top top",
-        end: "bottom bottom",
-        scrub: 2.2,
+        end: function () { return "+=" + window.innerHeight * (window.innerWidth <= 760 ? 1.25 : 1.2); },
+        scrub: 1,
         pin: ".hero__pin",
         anticipatePin: 1,
         onUpdate: function (self) {
@@ -425,7 +421,7 @@
         yPercent: Number(depth[1]),
         ease: "none"
       }, 0);
-      scrollTimeline.to(image, { opacity: 0, ease: "none" }, .55);
+      scrollTimeline.to(image, { opacity: window.innerWidth <= 760 ? 0 : .3, duration: .1, ease: "none" }, .55);
     });
     scrollTimeline.to(".hero__meta, .hero__identity, .hero__footer", {
       opacity: 0, y: -18, ease: "none"
@@ -437,47 +433,8 @@
         clipPath: "inset(0 0 0 0)", y: 0, duration: .9, stagger: .12, ease: "expo.out",
         scrollTrigger: { trigger: ".intro", start: "top 75%" }
       });
-    var transition = document.querySelector(".ai-transition");
-    var transitionArt = document.querySelector(".ai-transition__art");
-    var firstProject = document.querySelector(".project-stage.ps1");
-    if (transition && transitionArt && firstProject) {
-      var viewBox = { x: 0, y: 0, width: 1000, height: 500 };
-      function updateTransitionViewBox() {
-        transitionArt.setAttribute("viewBox",
-          [viewBox.x, viewBox.y, viewBox.width, viewBox.height].join(" "));
-      }
-      var transitionTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: transition,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: .8,
-          pin: ".ai-transition__pin",
-          anticipatePin: 1,
-          invalidateOnRefresh: true
-        }
-      });
-      transitionTimeline
-        .to(viewBox, {
-          x: 211, y: 340.5, width: 38, height: 19, duration: .92, ease: "none",
-          onUpdate: updateTransitionViewBox
-        }, 0)
-        .to([transitionArt, ".ai-transition__line"], {
-          opacity: 0, duration: .32, ease: "none"
-        }, .68)
-        .to(".ai-transition__index, .ai-transition__caption", {
-          opacity: 0, duration: .2, ease: "none"
-        }, .62)
-        .fromTo(".projects__head .eyebrow",
-          { y: 16, opacity: 0 },
-          { y: 0, opacity: 1, duration: .3, ease: "expo.out" }, .62)
-        .fromTo(".projects .reveal-line",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: .3, stagger: .04, ease: "expo.out" }, .62)
-        .fromTo(firstProject,
-          { "--stage-clip": "100%" },
-          { "--stage-clip": "0%", duration: .3, ease: "none" }, .68);
-    }
+    document.documentElement.classList.add("work-motion");
+    initWorkHandoff();
 
     initProjectShowcase();
     initAnimatedLines();
@@ -488,46 +445,95 @@
     setMenu(menuToggle.getAttribute("aria-expanded") !== "true");
   });
   if (menuClose) menuClose.addEventListener("click", function () { setMenu(false); });
+  function updateScrollSize() {
+    if (smoothScrollbar) smoothScrollbar.update();
+  }
+
+  function goToSection(id, animate, focus) {
+    var target = document.getElementById(id);
+    if (!target) return;
+    var current = smoothScrollbar ? smoothScrollbar.scrollTop : window.scrollY;
+    var handoff = id === "work" && window.ScrollTrigger && ScrollTrigger.getById("ai-work-handoff");
+    var top = id === "top" ? 0 : handoff ? handoff.end : current + target.getBoundingClientRect().top;
+    if (focus) {
+      if (!target.hasAttribute("tabindex")) target.tabIndex = -1;
+      target.focus({ preventScroll: true });
+    }
+    if (smoothScrollbar) smoothScrollbar.scrollTo(0, top, animate ? 720 : 0);
+    else window.scrollTo({ top: top, behavior: animate ? "smooth" : "instant" });
+  }
+
   document.addEventListener("click", function (event) {
     var link = event.target.closest("a[href^='#']");
-    if (!link || !smoothScrollbar) return;
-
-    var targetId = link.getAttribute("href").slice(1);
-    if (!targetId) return;
-    var target = document.getElementById(targetId);
-    if (!target) return;
-
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    var id = link.hash.slice(1);
+    if (!document.getElementById(id)) return;
     event.preventDefault();
     if (link.closest(".menu-panel")) setMenu(false);
-    if (target === smoothScrollElement) {
-      smoothScrollbar.scrollTo(0, 0, 1200);
-      return;
-    }
-    var targetPosition = target.getBoundingClientRect().top -
-      smoothScrollElement.getBoundingClientRect().top + smoothScrollbar.scrollTop;
-    smoothScrollbar.scrollTo(0, Math.max(0, targetPosition), 1200);
+    if (location.hash !== link.hash) history.pushState(null, "", link.hash);
+    goToSection(id, !motionPreference.matches, true);
   });
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") setMenu(false);
+  window.addEventListener("popstate", function () {
+    goToSection(location.hash.slice(1) || "top", false, false);
   });
 
-  document.body.classList.add("is-loading");
-  window.addEventListener("resize", function () {
-    fitHeroTitle();
-    if (smoothScrollbar) smoothScrollbar.update();
-    if (window.ScrollTrigger) ScrollTrigger.refresh();
-  });
-  loadAssets().then(function () {
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(function () {
-        fitHeroTitle();
-        initAnimations();
-      });
-    } else {
-      fitHeroTitle();
-      initAnimations();
+  document.addEventListener("keydown", function (event) {
+    if (menuPanel.inert) return;
+    if (event.key === "Escape") setMenu(false);
+    if (event.key !== "Tab") return;
+    var last = menuPanel.querySelector(".menu-panel__foot a");
+    if (event.shiftKey && document.activeElement === menuClose) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      menuClose.focus();
     }
   });
+
+  var animationContext;
+  function configureMotion() {
+    var position = smoothScrollbar ? smoothScrollbar.scrollTop : window.scrollY;
+    if (animationContext) {
+      animationContext.revert();
+      document.documentElement.classList.remove("work-motion");
+      document.querySelector(".ai-transition__art").setAttribute("viewBox", "0 0 1000 500");
+      document.querySelectorAll("[data-animated-line-initialized]").forEach(function (element) {
+        delete element.dataset.animatedLineInitialized;
+      });
+      animatedLineInstances = new WeakMap();
+      if (smoothScrollbar) {
+        ScrollTrigger.removeEventListener("refresh", updateScrollSize);
+        ScrollTrigger.defaults({ scroller: window });
+        ScrollTrigger.scrollerProxy(smoothScrollElement, null);
+        smoothScrollbar.destroy();
+        smoothScrollElement.classList.remove("smooth-scroll--active");
+        smoothScrollbar = smoothScrollElement = null;
+      }
+    }
+    reducedMotion = motionPreference.matches;
+    fitHeroTitle();
+    if (window.gsap && window.ScrollTrigger) {
+      animationContext = gsap.context(initAnimations);
+      ScrollTrigger.refresh();
+      if (smoothScrollbar) smoothScrollbar.setPosition(0, position);
+      else window.scrollTo({ top: position, behavior: "instant" });
+      ScrollTrigger.update();
+    }
+    finishLoading();
+  }
+
+  document.body.classList.add("is-loading");
+  var assetsReady = Promise.all([loadAssets(), document.fonts ? document.fonts.ready : Promise.resolve()]);
+  var deadline = new Promise(function (resolve) { setTimeout(resolve, 2500); });
+  Promise.race([assetsReady, deadline]).then(function () {
+    configureMotion();
+    if (location.hash) goToSection(location.hash.slice(1), false, false);
+    motionPreference.addEventListener("change", configureMotion);
+    window.matchMedia("(max-width: 760px)").addEventListener("change", configureMotion);
+  }).finally(finishLoading);
+  window.addEventListener("resize", fitHeroTitle);
+  if (document.fonts) document.fonts.addEventListener("loadingdone", fitHeroTitle);
   initCursor();
   initMagnetic();
 })();

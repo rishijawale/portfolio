@@ -6,10 +6,13 @@
   <meta name="theme-color" content="#151519">
   <meta name="description" content="DataRushi — Rushikesh Jawale, Artificial Intelligence and Data Science engineering student.">
   <title>DataRushi — Rushikesh Jawale</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20261125-12">
+  <link rel="preload" href="fonts/SpaceGrotesk.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="css/style.css?v=20261125-13">
+  <noscript><style>
+    .menu-toggle { display: none; }
+    .site-header { grid-template-columns: 1fr auto; }
+    .desktop-nav { display: flex; }
+  </style></noscript>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
@@ -36,13 +39,13 @@
       <a href="#research">Research</a>
       <a href="#contact">Contact</a>
     </nav>
-    <button class="menu-toggle magnetic" type="button" aria-expanded="false" aria-controls="menu-panel">
+    <button aria-label="Open navigation" class="menu-toggle magnetic" type="button" aria-expanded="false" aria-controls="menu-panel">
       <span class="menu-label">Menu</span>
       <span class="menu-icon" aria-hidden="true"><i></i><i></i></span>
     </button>
   </header>
 
-  <aside class="menu-panel" id="menu-panel" aria-hidden="true">
+  <aside class="menu-panel" id="menu-panel" role="dialog" aria-modal="true" aria-label="Portfolio navigation" aria-hidden="true" inert>
     <div class="menu-panel__top">
       <span>DataRushi / Index</span>
       <button class="menu-close" type="button" aria-label="Close menu">Close</button>
@@ -133,40 +136,43 @@
       </div>
     </section>
 
-    <section class="ai-transition" aria-label="Cinematic transition into selected work">
-      <div class="ai-transition__pin">
-        <div class="ai-transition__line-group" data-animated-line-group data-line-trigger=".ai-transition" data-line-start="top bottom-=50" aria-hidden="true">
-          <span class="animated-line animated-line--horizontal ai-transition__line ai-transition__line--top" data-animated-line="horizontal"></span>
-          <span class="animated-line animated-line--vertical ai-transition__line ai-transition__line--divider" data-animated-line="vertical"></span>
-        </div>
-        <span class="ai-transition__index">02 / Selected work</span>
-        <svg class="ai-transition__art" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-          <path fill-rule="evenodd" d="M80 440 220 60Q228 42 236 60L380 440H326L293 340H164L132 440ZM179 300H278L230 151Z"/>
-          <path d="M560 60H820V110H735V390H820V440H560V390H645V110H560Z"/>
-        </svg>
-        <p class="ai-transition__caption">From questions to systems.</p>
-      </div>
-    </section>
-
-    <section class="projects" id="work" aria-labelledby="work-title">
-      <span class="animated-line animated-line--horizontal projects__line projects__line--top" data-animated-line="horizontal" aria-hidden="true"></span>
+    <section class="projects" aria-labelledby="work-title">
       <div class="parallax_sections">
-        <article class="ps ps1 project-stage">
-          <span class="bgp" role="img" aria-label="Black-and-white close-up of a computer motherboard" style="background-image: url('img/hero/processor-motherboard.jpg')"></span>
-          <div class="projects__head">
-            <p class="eyebrow">03 / Selected projects</p>
-            <h2 id="work-title"><span class="reveal-line">Experiments in</span><em class="reveal-line">intelligent making.</em></h2>
+        <div class="work-handoff">
+          <div class="work-handoff__pin">
+            <section class="ai-transition" aria-label="Cinematic transition into selected work">
+              <div class="ai-transition__pin">
+                <div class="ai-transition__line-group" data-animated-line-group data-line-trigger=".ai-transition" data-line-start="top bottom-=50" aria-hidden="true">
+                  <span class="animated-line animated-line--horizontal ai-transition__line ai-transition__line--top" data-animated-line="horizontal"></span>
+                  <span class="animated-line animated-line--vertical ai-transition__line ai-transition__line--divider" data-animated-line="vertical"></span>
+                </div>
+                <span class="ai-transition__index">02 / Selected work</span>
+                <svg class="ai-transition__art" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+                  <path fill-rule="evenodd" d="M80 440 220 60Q228 42 236 60L380 440H326L293 340H164L132 440ZM179 300H278L230 151Z"/>
+                  <path d="M560 60H820V110H735V390H820V440H560V390H645V110H560Z"/>
+                </svg>
+                <p class="ai-transition__caption">From questions to systems.</p>
+              </div>
+            </section>
+
+            <article class="ps ps1 project-stage" id="work">
+              <span class="bgp" role="img" aria-label="Black-and-white close-up of a computer motherboard" style="background-image: url('img/hero/processor-motherboard.jpg')"></span>
+              <div class="projects__head">
+                <p class="eyebrow">03 / Selected projects</p>
+                <h2 id="work-title"><span class="reveal-line">Experiments in</span><em class="reveal-line">intelligent making.</em></h2>
+              </div>
+              <div class="fixed_t">
+                <h3 class="h2s" id="docpilot-title">DocPilot AI</h3>
+                <p class="txt vs">AI exploration / In progress</p>
+              </div>
+              <div class="project-stage__meta">
+                <span class="project-stage__number">01 / 03</span>
+                <span class="project-stage__tech">Python · FastAPI</span>
+                <a href="#contact" aria-label="Discuss DocPilot AI">Case study ↗</a>
+              </div>
+            </article>
           </div>
-          <div class="fixed_t">
-            <h3 class="h2s" id="docpilot-title">DocPilot AI</h3>
-            <p class="txt vs">AI exploration / In progress</p>
-          </div>
-          <div class="project-stage__meta">
-            <span class="project-stage__number">01 / 03</span>
-            <span class="project-stage__tech">Python · FastAPI</span>
-            <a href="#contact" aria-label="Discuss DocPilot AI">Case study ↗</a>
-          </div>
-        </article>
+        </div>
         <article class="ps ps2 project-stage">
           <span class="bgp" role="img" aria-label="Human and machine visual study" style="background-image: url('img/hero/human-ai.jpg')"></span>
           <div class="fixed_t">
@@ -210,9 +216,9 @@
     </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/smooth-scrollbar@8.8.4/dist/smooth-scrollbar.js"></script>
-  <script src="js/main.js?v=20261125-12"></script>
+  <script src="js/vendor/gsap.min.js"></script>
+  <script src="js/vendor/ScrollTrigger.min.js"></script>
+  <script src="js/vendor/smooth-scrollbar.js"></script>
+  <script src="js/main.js?v=20261125-13"></script>
 </body>
 </html>
